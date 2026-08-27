@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Cursor / planning (local only)
+.cursorrules
+.cursor/skills/
+PLAN_MVP.md
+plan_mvp.md
+plan_mpv.md
+
+# Frontend (cuando exista)
+node_modules/
+dist/
+*.local
