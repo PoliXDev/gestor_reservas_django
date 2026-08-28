@@ -46,50 +46,6 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           </div>
         </div>
       </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-        <div className="max-w-2xl">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-            Un sistema simple para gestionar pistas
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
-            Este sistema conecta socios y club en un solo flujo: eliges superficie y día, ves
-            huecos libres u ocupados, y confirmas la reserva sin recargar la página. El
-            panel de administración permite revisar la agenda del día y cancelar reservas.
-          </p>
-        </div>
-
-        <ul className="mt-10 grid gap-8 sm:grid-cols-3">
-          <li>
-            <p className="font-display text-lg font-semibold text-emerald-700">Calendario</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Franjas de 60 o 90 minutos por pista, con vista semanal y disponibilidad al instante.
-            </p>
-          </li>
-          <li>
-            <p className="font-display text-lg font-semibold text-emerald-700">Sin solapes</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              El backend bloquea horarios conflictivos para que dos reservas no ocupen el mismo hueco.
-            </p>
-          </li>
-          <li>
-            <p className="font-display text-lg font-semibold text-emerald-700">Confirmación ya</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Modal en dos pasos con resumen del jugador y actualización inmediata del calendario.
-            </p>
-          </li>
-        </ul>
-
-        <div className="mt-12">
-          <button
-            type="button"
-            onClick={() => onNavigate('courts')}
-            className="rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
-          >
-            Ir a reservar
-          </button>
-        </div>
-      </section>
     </div>
   )
 }
