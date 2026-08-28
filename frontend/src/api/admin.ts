@@ -8,6 +8,7 @@ export type AgendaBooking = {
   status: string
   player_name: string
   player_email: string
+  recurrence_group_id: string | null
 }
 
 export type AgendaCourt = {

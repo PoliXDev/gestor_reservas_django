@@ -1,5 +1,5 @@
 from .agenda import AgendaDayView, BookingCancelView
-from .bookings import BookingCreateView
+from .bookings import BookingCreateView, RecurringBookingCreateView
 from .courts import CourtListView, CourtSlotsView
 
 __all__ = [
@@ -8,4 +8,5 @@ __all__ = [
     "BookingCreateView",
     "CourtListView",
     "CourtSlotsView",
+    "RecurringBookingCreateView",
 ]

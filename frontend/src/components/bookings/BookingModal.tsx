@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import type { RecurringBookingResponse } from '../../api/bookings'
 import type { Court, TimeSlot } from '../../api/types'
 import { ApiError } from '../../api/client'
 import { useCreateBooking } from '../../features/bookings/hooks/useCreateBooking'
@@ -23,17 +24,35 @@ type BookingModalProps = {
 }
 
 const EMPTY_PLAYER: PlayerForm = { fullName: '', email: '' }
+const DEFAULT_RECURRING_WEEKS = 4
+
+function isRecurringResult(
+  result: unknown,
+): result is RecurringBookingResponse {
+  return (
+    typeof result === 'object' &&
+    result !== null &&
+    'count' in result &&
+    'recurrence_group_id' in result
+  )
+}
 
 export function BookingModal({ open, court, slot, date, onClose }: BookingModalProps) {
   const mutation = useCreateBooking()
   const [step, setStep] = useState<Step>('player')
   const [player, setPlayer] = useState<PlayerForm>(EMPTY_PLAYER)
+  const [recurring, setRecurring] = useState(false)
+  const [weeks, setWeeks] = useState(DEFAULT_RECURRING_WEEKS)
+  const [createdCount, setCreatedCount] = useState(1)
   const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!open) return
     setStep('player')
     setPlayer(EMPTY_PLAYER)
+    setRecurring(false)
+    setWeeks(DEFAULT_RECURRING_WEEKS)
+    setCreatedCount(1)
     setFormError(null)
     mutation.reset()
   }, [open, slot?.start])
@@ -117,6 +136,12 @@ export function BookingModal({ open, court, slot, date, onClose }: BookingModalP
             <dt className="text-slate-500">Horario</dt>
             <dd className="font-medium">{formatSlotRange(slot.start, slot.end)}</dd>
           </div>
+          {recurring ? (
+            <div className="flex justify-between gap-3">
+              <dt className="text-slate-500">Repetición</dt>
+              <dd className="font-medium">Semanal · {weeks} semanas</dd>
+            </div>
+          ) : null}
           {step !== 'player' ? (
             <>
               <div className="flex justify-between gap-3">
@@ -159,6 +184,31 @@ export function BookingModal({ open, court, slot, date, onClose }: BookingModalP
                 placeholder="ana@email.com"
               />
             </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={recurring}
+                onChange={(event) => setRecurring(event.target.checked)}
+                className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+              />
+              Repetir cada semana
+            </label>
+            {recurring ? (
+              <label className="block text-sm text-slate-600">
+                Número de semanas
+                <select
+                  value={weeks}
+                  onChange={(event) => setWeeks(Number(event.target.value))}
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                >
+                  {[2, 3, 4, 5, 6, 7, 8].map((value) => (
+                    <option key={value} value={value}>
+                      {value} semanas
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
             {formError ? (
               <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">
                 {formError}
@@ -209,15 +259,25 @@ export function BookingModal({ open, court, slot, date, onClose }: BookingModalP
                       end_time: slot.end,
                       player_name: player.fullName.trim(),
                       player_email: player.email.trim(),
+                      weeks: recurring ? weeks : undefined,
                     },
                     {
-                      onSuccess: () => setStep('success'),
+                      onSuccess: (result) => {
+                        setCreatedCount(
+                          recurring && isRecurringResult(result) ? result.count : 1,
+                        )
+                        setStep('success')
+                      },
                     },
                   )
                 }}
                 className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 disabled:opacity-60"
               >
-                {mutation.isPending ? 'Reservando…' : 'Confirmar reserva'}
+                {mutation.isPending
+                  ? 'Reservando…'
+                  : recurring
+                    ? `Confirmar ${weeks} reservas`
+                    : 'Confirmar reserva'}
               </button>
             </div>
           </div>
@@ -226,7 +286,9 @@ export function BookingModal({ open, court, slot, date, onClose }: BookingModalP
         {step === 'success' ? (
           <div className="space-y-4">
             <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-              Tu pista quedó reservada. El horario ya aparece como ocupado en el calendario.
+              {createdCount > 1
+                ? `Se crearon ${createdCount} reservas semanales agrupadas en la misma serie.`
+                : 'Tu pista quedó reservada. El horario ya aparece como ocupado en el calendario.'}
             </p>
             <button
               type="button"

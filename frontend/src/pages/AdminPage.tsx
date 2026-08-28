@@ -87,9 +87,14 @@ export function AdminPage({ onNavigate }: AdminPageProps) {
                         className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div>
-                          <p className="text-sm font-medium text-slate-900">
-                            {booking.player_name || 'Sin nombre'}
-                          </p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-sm font-medium text-slate-900">
+                              {booking.player_name || 'Sin nombre'}
+                            </p>
+                            {booking.recurrence_group_id ? (
+                              <Badge tone="action">Serie</Badge>
+                            ) : null}
+                          </div>
                           <p className="text-xs text-slate-500">
                             {formatSlotRange(booking.start_time, booking.end_time)}
                             {booking.player_email ? ` · ${booking.player_email}` : ''}

@@ -49,6 +49,9 @@ class AgendaService:
                             "status": b.status,
                             "player_name": b.player_name,
                             "player_email": b.player_email,
+                            "recurrence_group_id": (
+                                str(b.recurrence_group_id) if b.recurrence_group_id else None
+                            ),
                         }
                         for b in by_court[str(court.id)]
                     ],
